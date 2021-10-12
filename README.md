@@ -3,8 +3,13 @@
 
 ## Purpose
 > The purpose of this is to be able to ship single executables / libraries where all the
-> external assets & files can be bundled into the binary, and also to provide a comfortable interface
+> external assets & files can be bundled into the binary, and also to provide a comfortable interface  
 > to work with these files inside the application / library.
+
+### Example Use cases
+* VST Plugins that requires external files to function
+* Games that depends on external shader files
+* Any other application that depends on external files in some way
 
 ## usage
 
