@@ -148,6 +148,35 @@ void rvfs_extract(RVFSFile *f, const char *filepath) {
   }
 }
 
+RVFSFile *_rvfs_get_file(RVFSFile *f, char *tok) {
+  if (strcmp(f->name, tok) == 0) {
+    return f;
+  }
+
+  if (f->children && f->children_length) {
+    tok = strtok(0, "/");
+
+    for (uint32_t i = 0; i < f->children_length; i++) {
+      RVFSFile *child = &f->children[i];
+      RVFSFile *found = _rvfs_get_file(child, tok);
+
+      if (found)
+        return found;
+    }
+  }
+
+  return 0;
+}
+
+RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath) {
+  char *copypath = strdup(filepath);
+  char *tok = strtok(copypath, "/");
+
+  return _rvfs_get_file(f, tok);
+
+  return 0;
+}
+
 void rvfs_free(RVFSFile *f) {
   if (!f)
     return;

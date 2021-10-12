@@ -21,6 +21,8 @@ void rvfs_read(RVFSFile *f, const char *filepath);
 
 void rvfs_extract(RVFSFile *f, const char *filepath);
 
+RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath);
+
 void rvfs_free(RVFSFile *f);
 
 #endif
