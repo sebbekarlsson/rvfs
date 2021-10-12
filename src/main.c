@@ -1,29 +1,95 @@
 #include <rvfs/rvfs.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+static int extract(const char* inputfile, const char* destdir) {
+  RVFSFile rf = {};
+  rvfs_read(&rf, inputfile);
+  rvfs_extract(&rf, destdir);
+  rvfs_free(&rf);
+  return 0;
+}
+
+static int package(const char* inputdir, const char* destfile) {
+  RVFSFile f = {};
+  rvfs_create_from(&f, inputdir, 0);
+  rvfs_write(&f, destfile);
+  rvfs_free(&f);
+
+  return 0;
+}
+
+/*
+char* get_indent(uint32_t n) {
+  char* buff = (char*)calloc(n+1, sizeof(char));
+  memset(buff, '\t', n);
+  return buff;
+}*/
+
+static int _show(RVFSFile* f, char* filepath, int indent) {
+  if (f == 0) return 1;
+    if (f->children && f->children_length) {
+      for (uint32_t i = 0; i < f->children_length; i++) {
+        RVFSFile child = f->children[i];
+        char* newpath = (char*)calloc((filepath ? strlen(filepath) : 0) + strlen(child.name) + 16, sizeof(char));
+
+        if (filepath) {
+          strcat(newpath, filepath);
+        }
+        strcat(newpath, child.name);
+        printf("%d\t%d\t%s\n", child.is_directory, child.size, newpath);
+        _show(&child, newpath, indent+1);
+        free(newpath);
+      }
+    }
+
+    return 0;
+}
+
+static int show(const char* inputfile) {
+  RVFSFile rf = {};
+  rvfs_read(&rf, inputfile);
+  printf("is_dir\tsize\tname\n");
+  _show(&rf, rf.name ? rf.name : rf.filepath, 0);
+  rvfs_free(&rf);
+  return 1;
+}
+
+static int print_help() {
+  printf(
+    "Usage:\n"
+    "\t rvfs <command>\n\n"
+    "Commands:\n"
+    "\t extract <inputfile> <destdir>\n"
+    "\t package <inputdir> <destfile>\n"
+    "\t show <inputfile>\n"
+  );
+
+  return 1;
+}
 
 int main(int argc, char *argv[]) {
 
-  // create an archive in-memory from specified path to directory
-  RVFSFile f = {};
-  rvfs_create_from(&f, argv[1], 0);
-  rvfs_free(&f);
+  const char* cmd = argv[1];
 
-  // read an archive from disk into memory
-  RVFSFile rf = {};
-  rvfs_read(&rf, "test.rvfs");
+  if (argc < 2) return print_help();
 
-  // find a file from an archive in memory
-  RVFSFile *myfile = rvfs_get_file(&rf, "assets/hello.txt");
-
-  if (myfile) {
-    printf("Found it %s\n", myfile->name);
+  if (strcmp(cmd, "extract") == 0) {
+    if (argc < 3) return print_help();
+    return extract(argv[2], argv[3]);
   }
 
-  // extract archive to disk
-  rvfs_extract(&rf, "./extract");
+  if (strcmp(cmd, "package") == 0) {
+    if (argc < 3) return print_help();
+    return package(argv[2], argv[3]);
+  }
 
-  // free RVFSFile struct
-  rvfs_free(&rf);
+  if (strcmp(cmd, "show") == 0) {
+    if (argc < 2) return print_help();
+    return show(argv[2]);
+  }
 
-  return 0;
+  return print_help();
 }
