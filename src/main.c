@@ -37,6 +37,7 @@ static int _show(RVFSFile* f, char* filepath, int indent) {
 
         if (filepath) {
           strcat(newpath, filepath);
+          strcat(newpath, "/");
         }
         strcat(newpath, child.name);
         printf("%d\t%d\t%s\n", child.is_directory, child.size, newpath);
