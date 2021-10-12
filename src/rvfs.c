@@ -123,6 +123,14 @@ void rvfs_read(RVFSFile *f, const char *filepath) {
   fclose(fp);
 }
 
+void _rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len) {
+  // TODO: implement
+}
+
+void rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len) {
+  // TODO: implement
+}
+
 void rvfs_extract(RVFSFile *f, const char *filepath) {
   if (!filepath)
     return;

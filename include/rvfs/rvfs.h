@@ -19,6 +19,8 @@ void rvfs_write(RVFSFile *f, const char *filepath);
 
 void rvfs_read(RVFSFile *f, const char *filepath);
 
+void rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len);
+
 void rvfs_extract(RVFSFile *f, const char *filepath);
 
 RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath);
