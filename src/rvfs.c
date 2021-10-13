@@ -183,9 +183,7 @@ void rvfs_extract(RVFSFile *f, const char *filepath) {
 }
 
 RVFSFile *_rvfs_get_file(RVFSFile *f, char *tok) {
-  if (!tok) return 0;
-
-  if (f->name && strcmp(f->name, tok) == 0) {
+  if (f->name && tok && strcmp(f->name, tok) == 0) {
     return f;
   }
 
@@ -209,8 +207,6 @@ RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath) {
   char *tok = strtok(copypath, "/");
 
   return _rvfs_get_file(f, tok);
-
-  return 0;
 }
 
 void rvfs_free(RVFSFile *f) {
