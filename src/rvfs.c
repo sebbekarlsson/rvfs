@@ -123,37 +123,47 @@ void rvfs_read(RVFSFile *f, const char *filepath) {
   fclose(fp);
 }
 
-void _rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len) {
-  unsigned long int i = 0;
+void _rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, long unsigned int* ij) {
+  unsigned long int i = *ij;
   memcpy(&f->filepath_length, &raw_bytes[i], sizeof(uint32_t) * 1);
   i += sizeof(uint32_t);
+
+
   f->filepath = (char *)calloc(f->filepath_length + 1, sizeof(char));
   memcpy(&*f->filepath, &raw_bytes[i], sizeof(char) * f->filepath_length);
   i += f->filepath_length * sizeof(char);
+
   memcpy(&f->name_length, &raw_bytes[i], sizeof(uint32_t) * 1);
   i += sizeof(uint32_t);
+
   f->name = (char *)calloc(f->name_length + 1, sizeof(char));
   memcpy(&*f->name, &raw_bytes[i], sizeof(char) * f->name_length);
   i += f->name_length * sizeof(char);
+
   memcpy(&f->is_directory, &raw_bytes[i], sizeof(uint8_t) * 1);
   i += sizeof(uint8_t);
+
   memcpy(&f->size, &raw_bytes[i], sizeof(uint32_t) * 1);
   i += sizeof(uint32_t);
+
   f->bytes = (uint8_t *)calloc(f->size, sizeof(uint8_t));
   memcpy(&f->bytes[0], &raw_bytes[i], sizeof(uint8_t) * f->size);
   i += f->size * sizeof(uint8_t);
+
   memcpy(&f->children_length, &raw_bytes[i], sizeof(uint32_t) * 1);
   i += sizeof(uint32_t);
 
   f->children = (RVFSFile *)calloc(f->children_length, sizeof(RVFSFile));
 
+  *ij = i;
+
   for (uint32_t k = 0; k < f->children_length; k++) {
-    _rvfs_from_bytes(&f->children[k], raw_bytes+i, len);
+    _rvfs_from_bytes(&f->children[k], raw_bytes, ij);
   }
 }
 
 void rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len) {
-  _rvfs_from_bytes(f, raw_bytes, len);
+  _rvfs_from_bytes(f, raw_bytes, 0);
   // TODO: implement
 }
 
