@@ -187,9 +187,11 @@ RVFSFile *_rvfs_get_file(RVFSFile *f, char *tok) {
     return f;
   }
 
-  if (f->children && f->children_length) {
-    tok = strtok(0, "/");
+  if (f->filepath && tok && strcmp(f->filepath, tok) == 0) {
+    return f;
+  }
 
+  if (f->children && f->children_length) {
     for (uint32_t i = 0; i < f->children_length; i++) {
       RVFSFile *child = &f->children[i];
       RVFSFile *found = _rvfs_get_file(child, tok);
@@ -205,8 +207,17 @@ RVFSFile *_rvfs_get_file(RVFSFile *f, char *tok) {
 RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath) {
   char *copypath = strdup(filepath);
   char *tok = strtok(copypath, "/");
+  RVFSFile* ff = _rvfs_get_file(f, tok);
 
-  return _rvfs_get_file(f, tok);
+  RVFSFile* found = ff;
+  while (tok != 0 && ff != 0) {
+    ff = _rvfs_get_file(ff, tok);
+    tok = strtok(0, "/");
+    if (ff) found = ff;
+  }
+
+  return ff;
+
 }
 
 void rvfs_free(RVFSFile *f) {
