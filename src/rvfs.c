@@ -147,8 +147,8 @@ void _rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len) {
 
   f->children = (RVFSFile *)calloc(f->children_length, sizeof(RVFSFile));
 
-  for (uint32_t i = 0; i < f->children_length; i++) {
-    _rvfs_from_bytes(&f->children[i], raw_bytes+i, len);
+  for (uint32_t k = 0; k < f->children_length; k++) {
+    _rvfs_from_bytes(&f->children[k], raw_bytes+i, len);
   }
 }
 
