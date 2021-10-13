@@ -163,7 +163,8 @@ void _rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, long unsigned int* ij) {
 }
 
 void rvfs_from_bytes(RVFSFile* f, uint8_t* raw_bytes, uint32_t len) {
-  _rvfs_from_bytes(f, raw_bytes, 0);
+  long unsigned int ij = 0;
+  _rvfs_from_bytes(f, raw_bytes, &ij);
   // TODO: implement
 }
 
