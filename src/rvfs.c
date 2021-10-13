@@ -216,7 +216,9 @@ RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath) {
     if (ff) found = ff;
   }
 
-  return ff;
+  free(copypath);
+
+  return found;
 
 }
 
@@ -240,4 +242,31 @@ void rvfs_free(RVFSFile *f) {
   if (f->children) {
     free(f->children);
   }
+}
+
+int _rvfs_show(RVFSFile* f, char* filepath) {
+  if (f == 0) return 1;
+    if (f->children && f->children_length) {
+      for (uint32_t i = 0; i < f->children_length; i++) {
+        RVFSFile child = f->children[i];
+        char* newpath = (char*)calloc((filepath ? strlen(filepath) : 0) + strlen(child.name) + 16, sizeof(char));
+
+        if (filepath) {
+          strcat(newpath, filepath);
+          strcat(newpath, "/");
+        }
+        strcat(newpath, child.name);
+        printf("%d\t%d\t%s\n", child.is_directory, child.size, newpath);
+        _rvfs_show(&child, newpath);
+        free(newpath);
+      }
+    }
+
+    return 0;
+}
+
+int rvfs_show(RVFSFile* f) {
+  printf("is_dir\tsize\tname\n");
+  _rvfs_show(f, f->name ? f->name : f->filepath);
+  return 1;
 }

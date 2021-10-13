@@ -27,4 +27,6 @@ RVFSFile *rvfs_get_file(RVFSFile *f, const char *filepath);
 
 void rvfs_free(RVFSFile *f);
 
+int rvfs_show(RVFSFile* f);
+
 #endif

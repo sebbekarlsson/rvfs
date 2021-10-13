@@ -28,35 +28,7 @@ char* get_indent(uint32_t n) {
   return buff;
 }*/
 
-static int _show(RVFSFile* f, char* filepath, int indent) {
-  if (f == 0) return 1;
-    if (f->children && f->children_length) {
-      for (uint32_t i = 0; i < f->children_length; i++) {
-        RVFSFile child = f->children[i];
-        char* newpath = (char*)calloc((filepath ? strlen(filepath) : 0) + strlen(child.name) + 16, sizeof(char));
 
-        if (filepath) {
-          strcat(newpath, filepath);
-          strcat(newpath, "/");
-        }
-        strcat(newpath, child.name);
-        printf("%d\t%d\t%s\n", child.is_directory, child.size, newpath);
-        _show(&child, newpath, indent+1);
-        free(newpath);
-      }
-    }
-
-    return 0;
-}
-
-static int show(const char* inputfile) {
-  RVFSFile rf = {};
-  rvfs_read(&rf, inputfile);
-  printf("is_dir\tsize\tname\n");
-  _show(&rf, rf.name ? rf.name : rf.filepath, 0);
-  rvfs_free(&rf);
-  return 1;
-}
 
 static int find(const char* inputfile, const char* path) {
   RVFSFile rf = {};
@@ -69,7 +41,15 @@ static int find(const char* inputfile, const char* path) {
     printf("Not found.\n");
   }
   rvfs_free(&rf);
-  return 1;
+  return 0;
+}
+
+static int show(const char* filepath) {
+   RVFSFile rf = {};
+   rvfs_read(&rf, filepath);
+   rvfs_show(&rf);
+   rvfs_free(&rf);
+   return 0;
 }
 
 static int print_help() {
