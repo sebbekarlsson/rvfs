@@ -4,7 +4,11 @@
 ## Purpose
 > The purpose of this is to be able to ship single executables / libraries where all the
 > external assets & files can be bundled into the binary, and also to provide a comfortable interface  
-> to work with these files inside the application / library.
+> to work with these files inside the application / library.  
+
+> It has other use cases as well, it can be used to archive multiple files into
+> one, just like `.tar.gz` or `.zip`; However; rvfs does not currently compress
+> the data.
 
 ### Example Use cases
 * VST Plugins that requires external files to function
@@ -69,6 +73,24 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+```
+
+### CLI
+> There's also some command line utilities if you compile the executable.  
+> Here's how to use it:
+
+``` bash
+# create an archive
+rvfs package <inputdir> <destfile>.rvfs
+
+# extract an archive
+rvfs extract <inputfile>.rvfs <destdir>
+
+# query an archive for a specific file
+rvfs find <inputfile> <path>
+
+# list the contents of an archive
+rvfs show <inputfile>
 ```
 
 
